@@ -5,7 +5,7 @@ export default function useAuth() {
   const auth = getAuth();
   const errorMessage = ref('');
 
-  async function signup(email, password) {
+  async function signUp(email, password) {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       errorMessage.value = '';
@@ -23,5 +23,5 @@ export default function useAuth() {
     }
   }
 
-  return {};
+  return { signUp, errorMessage };
 }
