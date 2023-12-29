@@ -1,34 +1,18 @@
 <script setup>
-import { ref } from 'vue';
 import useBasket from '@/composables/useBasket.js';
+import usePizzas from '@/composables/usePizzas.js';
 
-const { basket, increaseQuantity, decreaseQuantity, addToBasket, total } = useBasket();
+const { basket, basketText, addNewOrder, increaseQuantity, decreaseQuantity, addToBasket, total } =
+  useBasket();
 
-const allPizzas = ref([
-  {
-    name: 'Margherita',
-    description: 'Eg. A delicious tomato based pizza topped with mozzarella',
-    options: [
-      { size: 9, price: 6.95 },
-      { size: 12, price: 12.95 },
-    ],
-  },
-  {
-    name: 'Pepperoni',
-    description: 'Eg. A delicious tomato based pizza topped with mozzarella & pepperoni',
-    options: [
-      { size: 9, price: 7.95 },
-      { size: 12, price: 13.95 },
-    ],
-  },
-]);
+const { allPizzas } = usePizzas();
 </script>
 <template>
   <div class="menu_wrapper">
     <div class="menu">
       <h3>~ Authentic handmade pizza ~</h3>
       <table>
-        <tbody v-for="(pizza, index) in allPizzas" :key="index">
+        <tbody v-for="pizza in allPizzas" :key="pizza.id">
           <tr>
             <td>
               <strong>~ {{ pizza.name }} ~</strong>
@@ -39,7 +23,7 @@ const allPizzas = ref([
               <small> {{ pizza.description }}</small>
             </td>
           </tr>
-          <tr v-for="(option, index) in pizza.options" :key="option[index]">
+          <tr v-for="option in pizza.options" :key="pizza.id + option.size">
             <td>{{ option.size }}</td>
             <td>{{ option.price }}</td>
             <td>
@@ -51,7 +35,7 @@ const allPizzas = ref([
     </div>
     <div class="basket">
       <h3>~ Basket ~</h3>
-      <div>
+      <div v-if="basket.length > 0">
         <table>
           <tbody v-for="(item, index) in basket" :key="index">
             <tr>
@@ -70,7 +54,10 @@ const allPizzas = ref([
           </tbody>
         </table>
         <p>Order total: R${{ total }}</p>
-        <button>Place order</button>
+        <button @click="addNewOrder">Place order</button>
+      </div>
+      <div v-else>
+        <p>{{ basketText }}</p>
       </div>
     </div>
   </div>

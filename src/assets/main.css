@@ -118,3 +118,7 @@ input, textarea {
     background: #faf1e2;
 }
 
+.toggleBtn {
+    cursor: pointer;
+}
+
