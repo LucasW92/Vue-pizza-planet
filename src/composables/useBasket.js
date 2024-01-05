@@ -1,10 +1,16 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { addDoc } from 'firebase/firestore';
 import { dbOrdersRef } from '../../firebase.js';
+import useAuth from './useAuth.js';
 
 export default function useBasket() {
+  const { userData } = useAuth();
+  watch(userData, function () {
+    signInMessage.value = '';
+  });
   const basket = ref([]);
   const basketText = ref('Your basket is empty');
+  const signInMessage = ref('');
 
   function addToBasket(item, option) {
     const pizzaExists = basket.value.find(function (pizza) {
@@ -44,22 +50,31 @@ export default function useBasket() {
     let totalCost = 0;
 
     basket.value.forEach(function (item) {
-      totalCost += Math.round(item.price * item.quantity * 100) / 100;
+      totalCost += (item.price * item.quantity * 100) / 100;
     });
     return totalCost;
   });
 
   async function addNewOrder() {
     try {
-      const order = {
-        createdAt: new Date(),
-        pizzas: { ...basket.value },
-      };
-      await addDoc(dbOrdersRef, order);
-      basket.value = [];
-      basketText.value = 'Thank you, your order has been placed!';
+      if (userData.value) {
+        const user = {
+          id: userData.value.uid,
+          email: userData.value.email,
+        };
+        const order = {
+          user,
+          createdAt: new Date(),
+          pizzas: { ...basket.value },
+        };
+        await addDoc(dbOrdersRef, order);
+        basket.value = [];
+        basketText.value = 'Thank you, your order has been placed!';
+      } else {
+        signInMessage.value = 'Please sign in to place an order';
+      }
     } catch (error) {
-      bassketText.value = 'There was an error placing your order, please try again...';
+      basketText.value = 'There was an error placing your order, please try again...';
     }
   }
 
@@ -71,5 +86,6 @@ export default function useBasket() {
     total,
     addNewOrder,
     basketText,
+    signInMessage,
   };
 }

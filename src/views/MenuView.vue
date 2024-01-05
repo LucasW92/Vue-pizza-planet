@@ -2,8 +2,16 @@
 import useBasket from '@/composables/useBasket.js';
 import usePizzas from '@/composables/usePizzas.js';
 
-const { basket, basketText, addNewOrder, increaseQuantity, decreaseQuantity, addToBasket, total } =
-  useBasket();
+const {
+  basket,
+  basketText,
+  addNewOrder,
+  increaseQuantity,
+  decreaseQuantity,
+  addToBasket,
+  total,
+  signInMessage,
+} = useBasket();
 
 const { allPizzas } = usePizzas();
 </script>
@@ -25,7 +33,7 @@ const { allPizzas } = usePizzas();
           </tr>
           <tr v-for="option in pizza.options" :key="pizza.id + option.size">
             <td>{{ option.size }}</td>
-            <td>{{ option.price }}</td>
+            <td>{{ filters.formatMoney(option.price) }}</td>
             <td>
               <button type="button" @click="addToBasket(pizza, option)">&#43;</button>
             </td>
@@ -49,11 +57,12 @@ const { allPizzas } = usePizzas();
                 </button>
               </td>
               <td>{{ item.name }} {{ item.size }}</td>
-              <td>{{ Math.round(item.price * item.quantity * 100) / 100 }}</td>
+              <td>{{ filters.formatMoney(item.price * item.quantity) }}</td>
             </tr>
           </tbody>
         </table>
-        <p>Order total: R${{ total }}</p>
+        <p>Order total: {{ filters.formatMoney(total) }}</p>
+        <p>{{ signInMessage }}</p>
         <button @click="addNewOrder">Place order</button>
       </div>
       <div v-else>
