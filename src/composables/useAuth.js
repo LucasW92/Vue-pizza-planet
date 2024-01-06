@@ -141,5 +141,6 @@ export default function useAuth() {
     findUser,
     selectedUser,
     toggleAdminMessage,
+    toggleAdmin,
   };
 }

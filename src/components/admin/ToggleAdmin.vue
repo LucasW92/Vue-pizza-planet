@@ -4,7 +4,7 @@ import useAuth from "@/composables/useAuth.js";
 
 const showToggleAdmin = ref(true);
 const email = ref("");
-const { findUser, selectedUser, toggleAdminMessage } = useAuth();
+const { findUser, selectedUser, toggleAdminMessage, toggleAdmin } = useAuth();
 </script>
 
 <template>
